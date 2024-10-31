@@ -75,18 +75,27 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     return self;
 }
 
-- (void) prepareData
+- (void) prepareData: (float*) a : (float*) b : (unsigned long) size
 {
     // Allocate three buffers to hold our initial data and the result.
     _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
     _mBufferB = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
     _mBufferResult = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
 
-    [self generateRandomFloatData:_mBufferA];
-    [self generateRandomFloatData:_mBufferB];
+    float* dataPtrA = _mBufferA.contents;
+    float* dataPtrB = _mBufferB.contents;
+
+    for (unsigned long index = 0; index < size; index++)
+    {
+        dataPtrA[index] = a[index];
+        dataPtrB[index] = b[index];
+    }
+
+    // [self generateRandomFloatData:_mBufferA];
+    // [self generateRandomFloatData:_mBufferB];
 }
 
-- (void) sendComputeCommand
+- (void) sendComputeCommand: (unsigned long) size
 {
     // Create a command buffer to hold commands.
     id<MTLCommandBuffer> commandBuffer = [_mCommandQueue commandBuffer];
@@ -108,7 +117,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     // but in this example, the code simply blocks until the calculation is complete.
     [commandBuffer waitUntilCompleted];
 
-    [self verifyResults];
+    [self verifyResults:size];
 }
 
 - (void)encodeAddCommand:(id<MTLComputeCommandEncoder>)computeEncoder {
@@ -134,29 +143,41 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
               threadsPerThreadgroup:threadgroupSize];
 }
 
-- (void) generateRandomFloatData: (id<MTLBuffer>) buffer
-{
-    float* dataPtr = buffer.contents;
+// - (void) generateRandomFloatData: (id<MTLBuffer>) buffer
+// {
+//     float* dataPtr = buffer.contents;
 
-    for (unsigned long index = 0; index < arrayLength; index++)
-    {
-        dataPtr[index] = (float)rand()/(float)(RAND_MAX);
-    }
-}
-- (void) verifyResults
+//     for (unsigned long index = 0; index < arrayLength; index++)
+//     {
+//         dataPtr[index] = (float)rand()/(float)(RAND_MAX);
+//     }
+// }
+
+- (void) verifyResults: (unsigned long) size
 {
     float* a = _mBufferA.contents;
     float* b = _mBufferB.contents;
     float* result = _mBufferResult.contents;
 
-    for (unsigned long index = 0; index < arrayLength; index++)
+    // int showCount = 10;
+
+    for (unsigned long index = 0; index < size; index++)
     {
         if (result[index] != (a[index] + b[index]))
         {
             printf("Compute ERROR: index=%lu result=%g vs %g=a+b\n",
                    index, result[index], a[index] + b[index]);
             assert(result[index] == (a[index] + b[index]));
+        } else {
+            printf("Compute index=%lu result=%g vs %g=a+b : a=%g b=%g\n",
+                    index, result[index], a[index] + b[index], a[index], b[index]);
         }
+        // if (showCount > 0)
+        // {
+        //     printf("Compute index=%lu result=%g vs %g=a+b\n",
+        //            index, result[index], a[index] + b[index]);
+        //     showCount--;
+        // }
     }
     printf("Compute results as expected\n");
 }

@@ -31,13 +31,27 @@ int main(int argc, const char * argv[]) {
         // Initializes objects to communicate with the GPU.
         MetalAdder* adder = [[MetalAdder alloc] initWithDevice:device];
         
+        unsigned long arrayLength = 24;
+
+        float a[arrayLength];
+        float b[arrayLength];
+
+        for (int i = 0; i < arrayLength; i++)
+        {
+            a[i] = i * 2.1;
+            b[i] = i * 0.3;
+        }
+
+
         // Create buffers to hold data
-        [adder prepareData];
+        [adder prepareData:a :b :arrayLength];
         
         // Send a command to the GPU to perform the calculation.
-        [adder sendComputeCommand];
+        [adder sendComputeCommand:arrayLength];
 
         NSLog(@"Execution finished");
+        
+        printf("Hello", adder);
     }
     return 0;
 }
