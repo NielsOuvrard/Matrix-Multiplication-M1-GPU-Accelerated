@@ -75,7 +75,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     return self;
 }
 
-- (void) prepareData: (float*) a : (float*) b : (unsigned long) size
+- (void) prepareData: (float*) array_a : (float*) array_b : (unsigned long) size
 {
     // Allocate three buffers to hold our initial data and the result.
     _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
@@ -87,12 +87,9 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
 
     for (unsigned long index = 0; index < size; index++)
     {
-        dataPtrA[index] = a[index];
-        dataPtrB[index] = b[index];
+        dataPtrA[index] = array_a[index];
+        dataPtrB[index] = array_b[index];
     }
-
-    // [self generateRandomFloatData:_mBufferA];
-    // [self generateRandomFloatData:_mBufferB];
 }
 
 - (void) sendComputeCommand: (unsigned long) size

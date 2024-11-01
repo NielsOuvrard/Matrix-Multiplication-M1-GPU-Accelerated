@@ -50,8 +50,6 @@ int main(int argc, const char * argv[]) {
         [adder sendComputeCommand:arrayLength];
 
         NSLog(@"Execution finished");
-        
-        printf("Hello", adder);
     }
     return 0;
 }
