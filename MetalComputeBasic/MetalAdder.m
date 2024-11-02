@@ -132,7 +132,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     // but in this example, the code simply blocks until the calculation is complete.
     [commandBuffer waitUntilCompleted];
 
-    [self verifyResultsMatrix:size :result];
+    [self writeResultsInts:size :result];
 }
 
 - (void)encodeAddCommand:(id<MTLComputeCommandEncoder>)computeEncoder {
@@ -168,13 +168,11 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
 //     }
 // }
 
-- (void) verifyResults: (unsigned long) size
+- (void) verifyResultsFloats: (unsigned long) size
 {
     float* a = _mBufferA.contents;
     float* b = _mBufferB.contents;
     float* result = _mBufferResult.contents;
-
-    // int showCount = 10;
 
     for (unsigned long index = 0; index < size; index++)
     {
@@ -183,36 +181,22 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
             printf("Compute ERROR: index=%lu result=%g vs %g=a+b\n",
                    index, result[index], a[index] + b[index]);
             assert(result[index] == (a[index] + b[index]));
-        } else {
-            printf("Compute index=%lu result=%g vs %g=a+b : a=%g b=%g\n",
-                    index, result[index], a[index] + b[index], a[index], b[index]);
         }
-        // if (showCount > 0)
-        // {
-        //     printf("Compute index=%lu result=%g vs %g=a+b\n",
-        //            index, result[index], a[index] + b[index]);
-        //     showCount--;
-        // }
     }
     printf("Compute results as expected\n");
 }
 
 // TODO add a buffer to fill
-- (void) verifyResultsMatrix: (unsigned long) size : (int *) result
+- (void) writeResultsInts: (unsigned long) size : (int *) result
 {
     int* a = _mBufferA.contents;
     int* b = _mBufferB.contents;
     int* resultBuffer = _mBufferResult.contents;
 
-    // int showCount = 10;
     (*result) = 0;
-    for (unsigned long index = 0; index < size; index++)
-    {
-        printf("Compute index=%lu result=%d vs %d=a+b : a=%d b=%d\n",
-                index, resultBuffer[index], a[index] + b[index], a[index], b[index]);
+    for (unsigned long index = 0; index < size; index++) {
         (*result) += resultBuffer[index];
     }
-    printf("Compute results as expected\n");
 }
 
 
