@@ -28,7 +28,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
 
 }
 
-- (instancetype) initWithDevice: (id<MTLDevice>) device
+- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *) function_name
 {
     self = [super init];
     if (self)
@@ -46,7 +46,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
             return nil;
         }
 
-        id<MTLFunction> addFunction = [defaultLibrary newFunctionWithName:@"add_arrays"];
+        id<MTLFunction> addFunction = [defaultLibrary newFunctionWithName:function_name];
         if (addFunction == nil)
         {
             NSLog(@"Failed to find the adder function.");
@@ -75,7 +75,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     return self;
 }
 
-- (void) prepareData: (float*) array_a : (float*) array_b : (unsigned long) size
+- (void) prepareListFloat: (float*) array_a : (float*) array_b : (unsigned long) size
 {
     // Allocate three buffers to hold our initial data and the result.
     _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
@@ -92,7 +92,25 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     }
 }
 
-- (void) sendComputeCommand: (unsigned long) size
+
+- (void) prepareListInt: (int *) array_a : (int *) array_b : (unsigned long) size
+{
+    // Allocate three buffers to hold our initial data and the result.
+    _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+    _mBufferB = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+    _mBufferResult = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+
+    int* dataPtrA = _mBufferA.contents;
+    int* dataPtrB = _mBufferB.contents;
+
+    for (unsigned long index = 0; index < size; index++)
+    {
+        dataPtrA[index] = array_a[index];
+        dataPtrB[index] = array_b[index];
+    }
+}
+
+- (void) sendComputeCommand: (unsigned long) size : (int *) result
 {
     // Create a command buffer to hold commands.
     id<MTLCommandBuffer> commandBuffer = [_mCommandQueue commandBuffer];
@@ -114,7 +132,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     // but in this example, the code simply blocks until the calculation is complete.
     [commandBuffer waitUntilCompleted];
 
-    [self verifyResults:size];
+    [self verifyResultsMatrix:size :result];
 }
 
 - (void)encodeAddCommand:(id<MTLComputeCommandEncoder>)computeEncoder {
@@ -178,4 +196,24 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     }
     printf("Compute results as expected\n");
 }
+
+// TODO add a buffer to fill
+- (void) verifyResultsMatrix: (unsigned long) size : (int *) result
+{
+    int* a = _mBufferA.contents;
+    int* b = _mBufferB.contents;
+    int* resultBuffer = _mBufferResult.contents;
+
+    // int showCount = 10;
+    (*result) = 0;
+    for (unsigned long index = 0; index < size; index++)
+    {
+        printf("Compute index=%lu result=%d vs %d=a+b : a=%d b=%d\n",
+                index, resultBuffer[index], a[index] + b[index], a[index], b[index]);
+        (*result) += resultBuffer[index];
+    }
+    printf("Compute results as expected\n");
+}
+
+
 @end
