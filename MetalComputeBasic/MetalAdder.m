@@ -110,7 +110,24 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     }
 }
 
-- (void) sendComputeCommand: (unsigned long) size : (int *) result
+- (void) prepareListDouble: (double *) array_a : (double *) array_b : (unsigned long) size
+{
+    // Allocate three buffers to hold our initial data and the result.
+    _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+    _mBufferB = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+    _mBufferResult = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
+
+    double* dataPtrA = _mBufferA.contents;
+    double* dataPtrB = _mBufferB.contents;
+
+    for (unsigned long index = 0; index < size; index++)
+    {
+        dataPtrA[index] = array_a[index];
+        dataPtrB[index] = array_b[index];
+    }
+}
+
+- (void) sendComputeCommand: (unsigned long) size : (double *) result
 {
     // Create a command buffer to hold commands.
     id<MTLCommandBuffer> commandBuffer = [_mCommandQueue commandBuffer];
@@ -132,7 +149,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     // but in this example, the code simply blocks until the calculation is complete.
     [commandBuffer waitUntilCompleted];
 
-    [self writeResultsInts:size :result];
+    [self writeResultsDoubles:size :result];
 }
 
 - (void)encodeAddCommand:(id<MTLComputeCommandEncoder>)computeEncoder {
@@ -186,11 +203,8 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     printf("Compute results as expected\n");
 }
 
-// TODO add a buffer to fill
 - (void) writeResultsInts: (unsigned long) size : (int *) result
 {
-    //int* a = _mBufferA.contents;
-    //int* b = _mBufferB.contents;
     int* resultBuffer = _mBufferResult.contents;
 
     (*result) = 0;
@@ -199,5 +213,14 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     }
 }
 
+- (void) writeResultsDoubles: (unsigned long) size : (double *) result
+{
+    double* resultBuffer = _mBufferResult.contents;
+
+    (*result) = 0;
+    for (unsigned long index = 0; index < size; index++) {
+        (*result) += resultBuffer[index];
+    }
+}
 
 @end

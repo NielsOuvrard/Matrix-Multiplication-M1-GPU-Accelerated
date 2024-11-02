@@ -25,3 +25,12 @@ kernel void multiply_ints_arrays(device const int* inA,
 {
     result[index] = inA[index] * inB[index];
 }
+
+
+kernel void multiply_floats_arrays(device const float* inA,
+                            device const float* inB,
+                            device float* result,
+                            uint index [[thread_position_in_grid]])
+{
+    result[index] = inA[index] * inB[index];
+}

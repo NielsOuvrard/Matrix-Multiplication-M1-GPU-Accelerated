@@ -12,10 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MetalAdder : NSObject
 
-- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *)functionName;
+- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *) functionName;
+- (void) prepareListDouble: (double *) arrayA : (double *) size : (unsigned long) size;
 - (void) prepareListInt: (int *) arrayA : (int *) size : (unsigned long) size;
 - (void) prepareListFloat: (float *) arrayA : (float *) size : (unsigned long) size;
-- (void) sendComputeCommand: (unsigned long) size : (int *)result;
+- (void) sendComputeCommand: (unsigned long) size : (double *) result;
 
 @end
 
