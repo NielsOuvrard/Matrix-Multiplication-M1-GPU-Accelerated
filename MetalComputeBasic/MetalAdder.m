@@ -28,7 +28,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
 
 }
 
-- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *) function_name
+- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *) functionName
 {
     self = [super init];
     if (self)
@@ -46,7 +46,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
             return nil;
         }
 
-        id<MTLFunction> addFunction = [defaultLibrary newFunctionWithName:function_name];
+        id<MTLFunction> addFunction = [defaultLibrary newFunctionWithName:functionName];
         if (addFunction == nil)
         {
             NSLog(@"Failed to find the adder function.");
@@ -189,8 +189,8 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
 // TODO add a buffer to fill
 - (void) writeResultsInts: (unsigned long) size : (int *) result
 {
-    int* a = _mBufferA.contents;
-    int* b = _mBufferB.contents;
+    //int* a = _mBufferA.contents;
+    //int* b = _mBufferB.contents;
     int* resultBuffer = _mBufferResult.contents;
 
     (*result) = 0;

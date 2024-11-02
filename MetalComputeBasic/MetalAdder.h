@@ -11,12 +11,12 @@ A class to manage all of the Metal objects this app creates.
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MetalAdder : NSObject
-- (instancetype)initWithDevice:(id<MTLDevice>)device:(NSString *)function_name;
-- (void)prepareListInt:(int *)array_a:(int *)array_b
-                      :(unsigned long)size;
-- (void)prepareListFloat:(float *)array_a:(float *)array_b
-                        :(unsigned long)size;
-- (void)sendComputeCommand:(unsigned long)size:(int *)result;
+
+- (instancetype) initWithDevice: (id<MTLDevice>) device : (NSString *)functionName;
+- (void) prepareListInt: (int *) arrayA : (int *) size : (unsigned long) size;
+- (void) prepareListFloat: (float *) arrayA : (float *) size : (unsigned long) size;
+- (void) sendComputeCommand: (unsigned long) size : (int *)result;
+
 @end
 
 NS_ASSUME_NONNULL_END

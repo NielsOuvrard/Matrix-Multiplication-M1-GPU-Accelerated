@@ -37,6 +37,7 @@
 		5FFAD4D321C8647E00384F46 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5FFAD4DB21C8648800384F46 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		5FFAD4DD21C869B700384F46 /* add.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = add.metal; sourceTree = "<group>"; };
+		DD151A292CD6A210006CF42C /* Mnist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mnist.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +84,7 @@
 		5FFAD4D221C8647E00384F46 /* MetalComputeBasic */ = {
 			isa = PBXGroup;
 			children = (
+				DD151A292CD6A210006CF42C /* Mnist.h */,
 				5FFAD4D321C8647E00384F46 /* main.m */,
 				5FB82D17221CD515006D0331 /* MetalAdder.h */,
 				5FB82D18221CD515006D0331 /* MetalAdder.m */,
@@ -148,6 +150,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 5FFAD4C721C8647D00384F46;
 			productRefGroup = 5FFAD4D121C8647E00384F46 /* Products */;

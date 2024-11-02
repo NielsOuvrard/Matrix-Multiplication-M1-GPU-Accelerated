@@ -8,6 +8,7 @@ An app that performs a simple calculation on a GPU.
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import "MetalAdder.h"
+#include "Mnist.h"
 
 #define SIZE_X_A 3
 #define SIZE_Y_A 2
@@ -66,25 +67,31 @@ int main(int argc, const char * argv[])
         // Initializes objects to communicate with the GPU.
         MetalAdder* adder = [[MetalAdder alloc] initWithDevice:device :functionNameNSString];
         
-        int a[SIZE_Y_A][SIZE_X_A] = {
-            {1, 2, 3},
-            {4, 5, 6}
-        };
-        st_matrix matrix_a = {(int *)a, SIZE_Y_A, SIZE_X_A};
-        int b[SIZE_Y_B][SIZE_X_B] = {
-            {7, 8},
-            {9, 10},
-            {11, 12}
-        };
-        st_matrix matrix_b = {(int *)b, SIZE_Y_B, SIZE_X_B};
+        // inputs = [ [ 0, 0 ], [ 0, 1 ], [ 1, 0 ], [ 1, 1 ] ]
+        // output = [ 0, 0, 0, 1 ]
 
-        int multiplied[matrix_a.y][matrix_b.x];
-        multiply_matrix(&matrix_a, &matrix_b, adder, (int *)multiplied);
+        
+        load_mnist();
+
+        int i;
+        for (i=0; i<784; i++) {
+            printf("%1.1f ", test_image[0][i]);
+            if ((i+1) % 28 == 0) putchar('\n');
+        }
+        printf("label: %d\n", test_label[0]);
+
+        // int multiplied[matrix_a.y][matrix_b.x];
+        // multiply_matrix(&matrix_a, &matrix_b, adder, (int *)multiplied);
 
 
-        print_matrix(&(st_matrix){(int *)multiplied, matrix_a.y, matrix_b.x});
+        // print_matrix(&(st_matrix){(int *)multiplied, matrix_a.y, matrix_b.x});
 
         NSLog(@"Execution finished");
     }
     return 0;
 }
+
+// TODO
+// - Transpose a matrix
+// - reshape, from a marix to a list
+// - clip ?  limits the values in an array to a specified range

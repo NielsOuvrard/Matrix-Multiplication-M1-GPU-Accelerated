@@ -10,10 +10,10 @@ https://github.com/takafumihoriuchi/MNIST_for_C
 #include <string.h>
 
 // set appropriate path for data
-#define TRAIN_IMAGE "./data/train-images.idx3-ubyte"
-#define TRAIN_LABEL "./data/train-labels.idx1-ubyte"
-#define TEST_IMAGE "./data/t10k-images.idx3-ubyte"
-#define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
+#define TRAIN_IMAGE "/Users/nielsouvrard/Documents/UP/IA_VG/PerformingCalculationsOnAGPU/Data/train-images-idx3-ubyte"
+#define TRAIN_LABEL "/Users/nielsouvrard/Documents/UP/IA_VG/PerformingCalculationsOnAGPU/Data/train-labels-idx1-ubyte"
+#define TEST_IMAGE "/Users/nielsouvrard/Documents/UP/IA_VG/PerformingCalculationsOnAGPU/Data/t10k-images-idx3-ubyte"
+#define TEST_LABEL "/Users/nielsouvrard/Documents/UP/IA_VG/PerformingCalculationsOnAGPU/Data/t10k-labels-idx1-ubyte"
 
 #define SIZE 784 // 28*28
 #define NUM_TRAIN 60000
@@ -44,7 +44,7 @@ int test_label[NUM_TEST];
 
 void FlipLong(unsigned char *ptr)
 {
-    unsigned char val;
+    register unsigned char val;
 
     // Swap 1st and 4th bytes
     val = *(ptr);
@@ -60,12 +60,12 @@ void FlipLong(unsigned char *ptr)
 
 void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, unsigned char data_char[][arr_n], int info_arr[])
 {
-    int i, j, k, fd;
+    int i, fd;
     unsigned char *ptr;
 
     if ((fd = open(file_path, O_RDONLY)) == -1)
     {
-        fprintf(stderr, "couldn't open image file");
+        fprintf(stderr, "couldn't open image file: %s\n", file_path);
         exit(-1);
     }
 
