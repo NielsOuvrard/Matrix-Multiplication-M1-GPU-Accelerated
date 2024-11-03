@@ -6,6 +6,7 @@ A class to manage all of the Metal objects this app creates.
 */
 
 #import "MetalAdder.h"
+#include "matrix_type.h"
 
 // The number of floats in each array, and the size of the arrays in bytes.
 const unsigned int arrayLength = 1 << 24;
@@ -75,6 +76,23 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     return self;
 }
 
+
+// void multiply_matrix(st_matrix *a, st_matrix *b, MetalAdder *adder, double result[])
+
+- (void) multiply_matrix_direct_buffer: (st_matrix *) matrixA : (st_matrix *) matrixB : (double[]) result
+{
+    for (unsigned int i = 0; i < matrixA->y; i++) {
+        for (unsigned int j = 0; j < matrixB->x; j++) {
+
+            // Create buffers to hold data
+            [self prepareListDouble:(matrixA->data + (i * matrixA->x)) :matrixB->data :j :matrixA->x];
+            
+            // Send matrixA command to the GPU to perform the calculation.
+            [self sendComputeCommand:matrixA->x :&(result[(i * matrixA->y) + j])];
+        }
+    }
+}
+
 - (void) prepareListFloat: (float*) array_a : (float*) array_b : (unsigned long) size
 {
     // Allocate three buffers to hold our initial data and the result.
@@ -110,7 +128,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     }
 }
 
-- (void) prepareListDouble: (double *) array_a : (double *) array_b : (unsigned long) size
+- (void) prepareListDouble: (double *) array_a : (double *) array_b : (unsigned int) j : (unsigned long) size
 {
     // Allocate three buffers to hold our initial data and the result.
     _mBufferA = [_mDevice newBufferWithLength:bufferSize options:MTLResourceStorageModeShared];
@@ -123,7 +141,7 @@ const unsigned int bufferSize = arrayLength * sizeof(float);
     for (unsigned long index = 0; index < size; index++)
     {
         dataPtrA[index] = array_a[index];
-        dataPtrB[index] = array_b[index];
+        dataPtrB[index] = array_b[(index * size) + j];
     }
 }
 

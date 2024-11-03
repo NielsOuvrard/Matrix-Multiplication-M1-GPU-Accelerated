@@ -9,32 +9,25 @@ An app that performs a simple calculation on a GPU.
 #import <Metal/Metal.h>
 #import "MetalAdder.h"
 #include "Mnist.h"
+#include "matrix_type.h"
 
-#define SIZE_IMAGE 28
+// void multiply_matrix(st_matrix *a, st_matrix *b, MetalAdder *adder, double result[])
+// {
+//     for (int i = 0; i < a->y; i++) {
+//         for (int j = 0; j < b->x; j++) {
+//             double tmp[b->y];
+//             for (int k = 0; k < b->y; k++) {
+//                 tmp[k] = b->data[(k * b->x) + j];
+//             }
 
-typedef struct st_matrix {
-    double *data;
-    int y;
-    int x;
-} st_matrix;
-
-void multiply_matrix(st_matrix *a, st_matrix *b, MetalAdder *adder, double result[])
-{
-    for (int i = 0; i < a->y; i++) {
-        for (int j = 0; j < b->x; j++) {
-            double tmp[b->y];
-            for (int k = 0; k < b->y; k++) {
-                tmp[k] = b->data[(k * b->x) + j];
-            }
-
-            // Create buffers to hold data
-            [adder prepareListDouble:(a->data + (i * a->x)) :tmp :a->x];
+//             // Create buffers to hold data
+//             [adder prepareListDouble:(a->data + (i * a->x)) :tmp :a->x];
             
-            // Send a command to the GPU to perform the calculation.
-            [adder sendComputeCommand:a->x :&(result[(i * a->y) + j])];
-        }
-    }
-}
+//             // Send a command to the GPU to perform the calculation.
+//             [adder sendComputeCommand:a->x :&(result[(i * a->y) + j])];
+//         }
+//     }
+// }
 
 void print_matrix(st_matrix *matrix)
 {
@@ -53,12 +46,13 @@ int main(int argc, const char * argv[])
 
         id<MTLDevice> device = MTLCreateSystemDefaultDevice();
         MetalAdder* adder = [[MetalAdder alloc] initWithDevice:device :@"multiply_floats_arrays"];
-
+        
         st_matrix first = {test_image[0], SIZE_IMAGE, SIZE_IMAGE};
         st_matrix second = {test_image[1], SIZE_IMAGE, SIZE_IMAGE};
 
         double output_result[SIZE];
-        multiply_matrix(&first, &second, adder, output_result);
+        // multiply_matrix(&first, &second, adder, output_result);
+        [adder multiply_matrix_direct_buffer: &first : &second : output_result];
 
 
         print_matrix(&(st_matrix){output_result, SIZE_IMAGE, SIZE_IMAGE});
