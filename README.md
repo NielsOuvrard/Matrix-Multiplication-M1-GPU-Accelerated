@@ -28,6 +28,14 @@ for (int i = 0; i < SIZE_Y_A; i++) {
 }
 ```
 
+This is a time-consuming operation, and the GPU can perform it much faster than the CPU.
+
+It need:
+
+n \* n² = n³ multiplications
+
+(n - 1) \* n = n² additions
+
 Every value of the matrix `multiplied` is calculated by the GPU in parallel, using this code:
 
 ```c
@@ -38,6 +46,12 @@ kernel void multiply_ints_arrays(device const int* inA,
 {
     result[index] = inA[index] * inB[index];
 }
+```
+
+First version:
+
+```shell
+./MetalComputeBasic  0.15s user 5.77s system 84% cpu 7.011 total
 ```
 
 [MTLDevice]: https://developer.apple.com/documentation/metal/mtldevice

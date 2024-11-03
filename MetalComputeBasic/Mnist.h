@@ -103,7 +103,7 @@ void label_char2int(int num_data, unsigned char data_label_char[][1], int data_l
         data_label[i] = (int)data_label_char[i][0];
 }
 
-void load_mnist()
+void load_mnist(void)
 {
     read_mnist_char(TRAIN_IMAGE, NUM_TRAIN, LEN_INFO_IMAGE, SIZE, train_image_char, info_image);
     image_char2double(NUM_TRAIN, train_image_char, train_image);
