@@ -1,13 +1,9 @@
-# Neural Networks M1 GPU Accelerated
+# Matrix Multiplication Metal Apple Sicicone Accelerated
 
 Use Metal to find GPUs and perform calculations on them.
-My goal is to use the GPU to accelerate the training of neural networks.
+My goal is to use the GPU to calculate matrices multiplications.
 
 I used the sample code from the Apple Developer "Performing Calculations on a GPU" to understand how to use the Apple Metal framework to perform calculations on the GPU.
-
-## Multiply two matrices
-
-The first step is to multiply two matrices.
 
 ```c
 int multiplied[SIZE_Y_A][SIZE_X_B];
